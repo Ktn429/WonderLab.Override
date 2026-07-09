@@ -26,8 +26,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     InvokedTargets = [nameof(Finish)])]
 public class Build : NukeBuild, ICreateGithubRelease {
     [Solution(GenerateProjects = true)] Solution Solution;
-    [Parameter] bool Prerelease;
-    
+     
     private readonly AbsolutePath OutputDirectory = RootDirectory / "artifacts";
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
@@ -36,8 +35,6 @@ public class Build : NukeBuild, ICreateGithubRelease {
     public string Name => $"v{Version}";
     public string Version => Solution.WonderLab.GetProperty(nameof(Version));
     public IEnumerable<AbsolutePath> AssetFiles => (OutputDirectory / "artifacts").GetFiles();
-
-    bool ICreateGithubRelease.IsPrerelease => Prerelease;
     
     public static int Main() => Execute<Build>(x => x.Finish);
 
