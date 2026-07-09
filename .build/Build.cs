@@ -34,15 +34,15 @@ public class Build : NukeBuild, ICreateGithubRelease {
     private string FileNameFormat => Solution.WonderLab.Name + "-{0}";
 
     public string Name => $"v{Version}";
-    public bool IsPrerelease => Prerelease;
     public string Version => Solution.WonderLab.GetProperty(nameof(Version));
     public IEnumerable<AbsolutePath> AssetFiles => (OutputDirectory / "artifacts").GetFiles();
 
+    bool ICreateGithubRelease.IsPrerelease => Prerelease;
+    
     public static int Main() => Execute<Build>(x => x.Finish);
 
     Target Clean => _ => _
         .Executes(() => {
-            Log.Information("{IsPrerelease}", IsPrerelease);
             OutputDirectory.CreateOrCleanDirectory();
             Log.Information("Clean up");
         });
