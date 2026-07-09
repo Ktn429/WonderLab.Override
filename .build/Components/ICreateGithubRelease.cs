@@ -41,7 +41,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
         ("release", "## 🚀 Release"),
         ("other", "## 📦 Other")
     ];
-    
+     
     public const string GitHubRelease = nameof(GitHubRelease);
 
     [GitRepository] [Required] GitRepository GitRepository => TryGetValue(() => GitRepository);
