@@ -58,10 +58,6 @@ public partial interface ICreateGithubRelease : INukeBuild {
         .Requires(() => GitHubToken)
         .OnlyWhenDynamic(ShouldRelease)
         .Executes(async () => {
-            Log.Information(
-                "Prerelease: {Prerelease}",
-                Prerelease);
-            
             GitHubTasks.GitHubClient.Credentials = new Credentials(GitHubToken.NotNull());
             Log.Information("Starting create release...");
             
@@ -187,6 +183,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
         var previousTag = GetPreviousTag();
 
         Log.Information("Generate release notes from {Tag} to HEAD", previousTag);
+        Log.Information("Prerelease: {Prerelease}", Prerelease);
         
         var range = previousTag is null
             ? "HEAD"
