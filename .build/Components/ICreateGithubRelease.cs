@@ -116,7 +116,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
                         new NewRelease(releaseName) {
                             Name = releaseName,
                             Draft = Draft,
-                            Prerelease = !GitRepository.IsOnMainBranch(),
+                            Prerelease = Prerelease,
                             Body = BuildLog()
                         });
                 }
