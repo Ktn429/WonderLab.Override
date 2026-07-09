@@ -46,6 +46,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
 
     [GitRepository] [Required] GitRepository GitRepository => TryGetValue(() => GitRepository);
     [Parameter] [Secret] string GitHubToken => TryGetValue(() => GitHubToken) ?? GitHubActions.Instance?.Token;
+    [Parameter] bool IsPrerelease => TryGetValue<bool>(() => IsPrerelease);
 
     string Name { get; }
     
@@ -87,7 +88,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
             return;
         
             async Task<string> GetReleaseNameAsync() {
-                if (GitRepository.IsOnMainBranch())
+                if (!IsPrerelease)
                     return Name;
         
                 var tags = await GitHubTasks.GitHubClient.Repository.GetAllTags(
