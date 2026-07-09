@@ -19,7 +19,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     GitHubActionsImage.UbuntuLatest,
     FetchDepth = 0,
     Submodules = GitHubActionsSubmodules.Recursive,
-    AutoGenerate = true,
+    AutoGenerate = false,
     PublishArtifacts = true,
     EnableGitHubToken = true,
     On = [GitHubActionsTrigger.Push],
