@@ -111,6 +111,9 @@
           "type": "string",
           "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
+        "Prerelease": {
+          "type": "boolean"
+        },
         "Solution": {
           "type": "string",
           "description": "Path to a solution file that is automatically loaded"

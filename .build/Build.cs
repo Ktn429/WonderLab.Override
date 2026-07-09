@@ -19,19 +19,19 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     GitHubActionsImage.UbuntuLatest,
     FetchDepth = 0,
     Submodules = GitHubActionsSubmodules.Recursive,
-    AutoGenerate = true,
+    AutoGenerate = false,
     PublishArtifacts = true,
     EnableGitHubToken = true,
     On = [GitHubActionsTrigger.Push],
     InvokedTargets = [nameof(Finish)])]
 public class Build : NukeBuild, ICreateGithubRelease {
     [Solution(GenerateProjects = true)] Solution Solution;
-    
+     
     private readonly AbsolutePath OutputDirectory = RootDirectory / "artifacts";
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     private string FileNameFormat => Solution.WonderLab.Name + "-{0}";
-    
+
     public string Name => $"v{Version}";
     public string Version => Solution.WonderLab.GetProperty(nameof(Version));
     public IEnumerable<AbsolutePath> AssetFiles => (OutputDirectory / "artifacts").GetFiles();

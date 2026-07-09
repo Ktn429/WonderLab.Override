@@ -9,6 +9,7 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitHub;
 using Octokit;
@@ -40,11 +41,13 @@ public partial interface ICreateGithubRelease : INukeBuild {
         ("release", "## 🚀 Release"),
         ("other", "## 📦 Other")
     ];
-    
+     
     public const string GitHubRelease = nameof(GitHubRelease);
 
     [GitRepository] [Required] GitRepository GitRepository => TryGetValue(() => GitRepository);
     [Parameter] [Secret] string GitHubToken => TryGetValue(() => GitHubToken) ?? GitHubActions.Instance?.Token;
+
+    [Parameter] bool Prerelease => TryGetValue<bool>(() => Prerelease);
 
     string Name { get; }
     
@@ -56,6 +59,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
         .Requires(() => GitHubToken)
         .OnlyWhenDynamic(ShouldRelease)
         .Executes(async () => {
+            Log.Information("{Prerelease}", Prerelease);
             GitHubTasks.GitHubClient.Credentials = new Credentials(GitHubToken.NotNull());
             Log.Information("Starting create release...");
             
@@ -64,7 +68,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
             
             await Task.WhenAll(AssetFiles.Select(async file => {
                 await using var stream = File.OpenRead(file);
-        
+                
                 var fileName = string.Format(file.Name, releaseName);
         
                 await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(
@@ -74,14 +78,14 @@ public partial interface ICreateGithubRelease : INukeBuild {
                         ContentType = "application/octet-stream",
                         RawData = stream
                     });
-        
+                
                 Log.Information("{Name} uploaded successfully!", fileName);
             }));
             
             return;
         
             async Task<string> GetReleaseNameAsync() {
-                if (GitRepository.IsOnMainBranch())
+                if (!Prerelease)
                     return Name;
         
                 var tags = await GitHubTasks.GitHubClient.Repository.GetAllTags(
@@ -166,15 +170,22 @@ public partial interface ICreateGithubRelease : INukeBuild {
     }
     
     private string GetPreviousTag() {
-        return GitTasks
-            .Git($"describe --tags --abbrev=0 HEAD^")
-            .FirstOrDefault().Text;
+        try {
+            return GitTasks
+                .Git("describe --tags --abbrev=0 HEAD^")
+                .FirstOrDefault()
+                .Text;
+        }
+        catch (ProcessException) {
+            return null;
+        }
     }
 
     private IEnumerable<(string, string)> GetCommitInfos() {
         var previousTag = GetPreviousTag();
 
         Log.Information("Generate release notes from {Tag} to HEAD", previousTag);
+        Log.Information("Prerelease: {Prerelease}", Prerelease);
         
         var range = previousTag is null
             ? "HEAD"
