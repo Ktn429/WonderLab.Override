@@ -9,6 +9,7 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitHub;
 using Octokit;
@@ -166,9 +167,15 @@ public partial interface ICreateGithubRelease : INukeBuild {
     }
     
     private string GetPreviousTag() {
-        return GitTasks
-            .Git($"describe --tags --abbrev=0 HEAD^")
-            .FirstOrDefault().Text;
+        try {
+            return GitTasks
+                .Git("describe --tags --abbrev=0 HEAD^")
+                .FirstOrDefault()
+                .Text;
+        }
+        catch (ProcessException) {
+            return null;
+        }
     }
 
     private IEnumerable<(string, string)> GetCommitInfos() {
