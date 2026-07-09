@@ -42,7 +42,7 @@ jobs:
           merge_multiple: true
 
       - name: 'Run: CreateGitHubRelease'
-        run: ./build.cmd CreateGitHubRelease
+        run: |
+          ./build.cmd CreateGitHubRelease --prerelease=${{ github.event.workflow_run.head_branch != 'main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NUKE_PRERELEASE: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch != 'main' }}
