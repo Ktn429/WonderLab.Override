@@ -41,7 +41,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
         ("release", "## 🚀 Release"),
         ("other", "## 📦 Other")
     ];
-    
+     
     public const string GitHubRelease = nameof(GitHubRelease);
 
     [GitRepository] [Required] GitRepository GitRepository => TryGetValue(() => GitRepository);
@@ -116,7 +116,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
                         new NewRelease(releaseName) {
                             Name = releaseName,
                             Draft = Draft,
-                            Prerelease = !GitRepository.IsOnMainBranch(),
+                            Prerelease = Prerelease,
                             Body = BuildLog()
                         });
                 }
