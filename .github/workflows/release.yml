@@ -45,4 +45,4 @@ jobs:
         run: ./build.cmd CreateGitHubRelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PRERELEASE: ${{ github.event.workflow_run.head_branch != 'main' }}
+          NUKE_PRERELEASE: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch != 'main' }}
