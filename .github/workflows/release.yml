@@ -24,7 +24,12 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
-
+          
+      - name: Debug
+        run: |
+          echo "branch=${{ github.event.workflow_run.head_branch }}"
+          echo "value=${{ github.event.workflow_run.head_branch != 'main' }}"
+      
       - name: Cache
         uses: actions/cache@v4
         with:
