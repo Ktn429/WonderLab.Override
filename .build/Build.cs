@@ -17,6 +17,8 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 [GitHubActions("continuous",
     GitHubActionsImage.MacOsLatest,
     GitHubActionsImage.UbuntuLatest,
+    FetchDepth = 0,
+    Submodules = GitHubActionsSubmodules.Recursive,
     AutoGenerate = true,
     PublishArtifacts = true,
     EnableGitHubToken = true,
@@ -170,7 +172,7 @@ public class Build : NukeBuild, ICreateGithubRelease {
          
          (OutputDirectory / runtime).DeleteDirectory();
      }
-}// Clean → Restore → Publish → ZipArtifacts → CreateGitHubRelease
+}
 
 [Command(
     Arguments = "appimage",
