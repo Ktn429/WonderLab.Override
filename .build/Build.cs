@@ -42,6 +42,7 @@ public class Build : NukeBuild, ICreateGithubRelease {
 
     Target Clean => _ => _
         .Executes(() => {
+            Log.Information("{IsPrerelease}", IsPrerelease);
             OutputDirectory.CreateOrCleanDirectory();
             Log.Information("Clean up");
         });
