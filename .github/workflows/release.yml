@@ -48,6 +48,7 @@ jobs:
 
       - name: 'Run: CreateGitHubRelease'
         run: |
-          ./build.cmd CreateGitHubRelease --prerelease=${{ github.event.workflow_run.head_branch != 'main' }}
+          echo "./build.cmd CreateGitHubRelease --prerelease=${{ github.event.workflow_run.head_branch != 'main' }}"
+          ./build.cmd CreateGitHubRelease --prerelease="${{ github.event.workflow_run.head_branch != 'main' }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
