@@ -57,6 +57,11 @@ public partial interface ICreateGithubRelease : INukeBuild {
         .Requires(() => GitHubToken)
         .OnlyWhenDynamic(ShouldRelease)
         .Executes(async () => {
+            Log.Information(
+                "Branch={Branch}, IsMain={IsMain}",
+                GitRepository.Branch,
+                GitRepository.IsOnMainBranch());
+            
             GitHubTasks.GitHubClient.Credentials = new Credentials(GitHubToken.NotNull());
             Log.Information("Starting create release...");
             
@@ -75,7 +80,7 @@ public partial interface ICreateGithubRelease : INukeBuild {
                         ContentType = "application/octet-stream",
                         RawData = stream
                     });
-        
+                
                 Log.Information("{Name} uploaded successfully!", fileName);
             }));
             
